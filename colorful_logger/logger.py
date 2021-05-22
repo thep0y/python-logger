@@ -4,7 +4,7 @@
 # @Email: thepoy@163.com
 # @File Name: logger.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-05-21 15:18:13
+# @Modified: 2021-05-22 11:24:33
 
 import sys
 import logging
@@ -14,14 +14,22 @@ from logging import Logger
 
 from colorful_logger.formatter import ColorfulFormatter
 
-LOG_FORMAT = '[%(levelname)s] %(asctime)s %(pathname)s:%(lineno)d - %(message)s'
+NOTSET = logging.NOTSET
+DEBUG = logging.DEBUG
+INFO = logging.INFO
+WARNING = logging.WARNING
+ERROR = logging.ERROR
+FATAL = logging.FATAL
+CRITICAL = logging.CRITICAL
+
+LOG_FORMAT = '[%(levelname)s] %(asctime)s - %(name)s - %(pathname)s:%(lineno)d - %(message)s'
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
 def __console_handler(logger):
     console_handler = logging.StreamHandler()
 
-    fmt = ColorfulFormatter(LOG_FORMAT, TIME_FORMAT)
+    fmt = ColorfulFormatter(datefmt=TIME_FORMAT)
     console_handler.setFormatter(fmt)
     logger.addHandler(console_handler)
 
@@ -47,7 +55,7 @@ class CustomLogger(Logger):
 
 def get_logger(
     name: Optional[str] = None,
-    level: str = logging.WARNING,
+    level: int = WARNING,
     show: bool = True,
     file_path: Optional[str] = None,
 ) -> Logger:

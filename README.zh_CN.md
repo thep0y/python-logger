@@ -28,11 +28,9 @@ logger.fatal("This is a fatal message.")
 也可以自定义日志等级，保存日志到文件：
 
 ```python
-import logging
-from colorful_logger.logger import get_logger
+from colorful_logger.logger import get_logger, DEBUG
 
-# name 参数没有什么用，不需要传此参数，因为当前的日志不输出 name 字段
-logger = get_logger(name="logger", level=logging.DEBUG, file_path="./test.log")
+logger = get_logger(name="sample_logger", level=DEBUG, file_path="./test.log")
 
 logger.debug("This is a debug message.")
 logger.info("This is a info message.")
@@ -41,16 +39,16 @@ logger.error("This is a error message.")
 logger.fatal("This is a fatal message.")
 ```
 
-![custom logger](https://cdn.jsdelivr.net/gh/thep0y/image-bed/md/1621581068178.png)
+![custom logger](https://cdn.jsdelivr.net/gh/thep0y/image-bed/md/1621653262747.png)
 
 日志文件`./test.log`内容
 
 ```
-[DEBUG] 2021-05-21 15:08:42 test.py:8 - This is a debug message.
-[INFO] 2021-05-21 15:08:42 test.py:9 - This is a info message.
-[WARNING] 2021-05-21 15:08:42 test.py:10 - This is a warning message.
-[ERROR] 2021-05-21 15:08:42 test.py:11 - This is a error message.
-[CRITICAL] 2021-05-21 15:08:42 test.py:12 - This is a fatal message.
+[DEBUG] 2021-05-22 11:21:46 - sample_logger - test.py:6 - This is a debug message.
+[INFO] 2021-05-22 11:21:46 - sample_logger - test.py:7 - This is a info message.
+[WARNING] 2021-05-22 11:21:46 - sample_logger - test.py:8 - This is a warning message.
+[ERROR] 2021-05-22 11:21:46 - sample_logger - test.py:9 - This is a error message.
+[CRITICAL] 2021-05-22 11:21:46 - sample_logger - test.py:10 - This is a fatal message.
 ```
 
 输出到文件的日志没有使用彩色格式，因为我个人觉得，保存到文件中的日志没有必要是彩色的。
@@ -64,13 +62,13 @@ logger.fatal("This is a fatal message.")
 ```python
 def get_logger(
     name: Optional[str] = None,
-    level: str = logging.WARNING,
+    level: int = logging.WARNING,
     show: bool = True,
     file_path: Optional[str] = None,
 ) -> Logger: ...
 ```
 
-- *name* 对我来说没有用，以后可能会删除此参数
+- *name* logger 实例名，可以在不同的实例对象调用日志时为日志命名
 - *level* 日志等级
 - *show* 是否在终端中显示。如果你想用此彩色日志包的话，通常是想在终端显示的吧
 - *file_path* 是否保存到文件。默认是`None`，当其不是`None`时，会保存到对应的文件中

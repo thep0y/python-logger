@@ -28,10 +28,9 @@ logger.fatal("This is a fatal message.")
 You can also change the log level, save the log to a file, change the logger name, and the log may not be output to the terminal.
 
 ```python
-import logging
-from colorful_logger.logger import get_logger
+from colorful_logger.logger import get_logger, DEBUG
 
-logger = get_logger(name="logger", level=logging.DEBUG, file_path="./test.log")
+logger = get_logger(name="sample_logger", level=DEBUG, file_path="./test.log")
 
 logger.debug("This is a debug message.")
 logger.info("This is a info message.")
@@ -40,7 +39,7 @@ logger.error("This is a error message.")
 logger.fatal("This is a fatal message.")
 ```
 
-![custom logger](https://cdn.jsdelivr.net/gh/thep0y/image-bed/md/1621581068178.png)
+![custom logger](https://cdn.jsdelivr.net/gh/thep0y/image-bed/md/1621653262747.png)
 
 The contents of the log file:
 

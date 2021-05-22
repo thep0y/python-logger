@@ -4,7 +4,7 @@
 # @Email: thepoy@163.com
 # @File Name: formatter.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-05-21 13:57:25
+# @Modified: 2021-05-22 11:07:16
 
 import time
 
@@ -69,6 +69,9 @@ class ColorfulFormatter(Formatter):
 
         return self.colors["blue"].format(s) + "  "
 
+    def __name(self, record):
+        return "" if record.name == "root" else self.colors["cyan"].format(f"{record.name} - ")
+
     def __position(self, record: LogRecord):
         if record.levelname in ["DEBUG", "INFO", "WARNING", "WARN"]:
             return ""
@@ -91,5 +94,6 @@ class ColorfulFormatter(Formatter):
                 s = s + "\n"
             s = s + self.formatStack(record.stack_info)
 
-        s = self.__level(record.levelname) + self.__time(record) + self.__position(record) + record.msg
+        s = self.__level(
+            record.levelname) + self.__time(record) + self.__position(record) + self.__name(record) + record.msg
         return s
