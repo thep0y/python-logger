@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 
 tests
+._README.md
+._README.zh_CN.md
