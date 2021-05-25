@@ -4,7 +4,7 @@
 # @Email: thepoy@163.com
 # @File Name: formatter.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-05-22 11:07:16
+# @Modified: 2021-05-25 12:16:11
 
 import time
 
@@ -94,6 +94,6 @@ class ColorfulFormatter(Formatter):
                 s = s + "\n"
             s = s + self.formatStack(record.stack_info)
 
-        s = self.__level(
-            record.levelname) + self.__time(record) + self.__position(record) + self.__name(record) + record.msg
+        msg = record.msg % record.args if record.args else record.msg
+        s = self.__level(record.levelname) + self.__time(record) + self.__position(record) + self.__name(record) + msg
         return s
