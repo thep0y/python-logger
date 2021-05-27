@@ -4,7 +4,7 @@
 # @Email: thepoy@163.com
 # @File Name: setup.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-05-21 14:25:39
+# @Modified: 2021-05-27 09:30:08
 
 import codecs
 import colorful_logger
@@ -26,4 +26,7 @@ with codecs.open("README.md", "r", "utf-8") as fd:
         license="MIT",
         keywords="log logger logging colorful",
         packages=find_packages(),
+        install_requires=[
+            "colort",
+        ],
     )

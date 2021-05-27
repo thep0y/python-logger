@@ -4,11 +4,13 @@
 # @Email: thepoy@163.com
 # @File Name: formatter.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-05-25 12:16:11
+# @Modified: 2021-05-27 09:41:46
 
 import time
 
 from logging import Formatter, LogRecord
+
+from colort import display_style as ds
 
 
 class ColorfulFormatter(Formatter):
@@ -38,44 +40,42 @@ class ColorfulFormatter(Formatter):
             "FATAL": "[FATAL] ",
         }
 
-        # self.datefmt = datefmt
-
         super().__init__(fmt, datefmt, style)
 
     def __level(self, levelname: str) -> str:
         if levelname == "DEBUG":
-            return self.colors["purple"].format(self.level_prefix[levelname])
+            return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.purple)
 
         if levelname == "INFO":
-            return self.colors["green"].format(self.level_prefix[levelname])
+            return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.green)
 
         if levelname == "WARNING":
-            return self.colors["orange"].format(self.level_prefix[levelname])
+            return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.yellow)
 
         if levelname == "ERROR":
-            return self.colors["red"].format(self.level_prefix[levelname])
+            return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.red)
 
         if levelname == "FATAL":
-            return self.colors["red"].format(self.level_prefix[levelname])
+            return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.red)
 
         if levelname == "CRITICAL":
-            return self.colors["red"].format(self.level_prefix["FATAL"])
+            return ds.format_with_one_style(self.level_prefix["FATAL"], ds.foreground_color.red)
 
-        return self.colors["off"].format(levelname)
+        return ds.format_with_one_style(f"[{levelname}]", ds.mode.normal)
 
     def __time(self, record):
         ct = self.converter(record.created)
         s = time.strftime(self.datefmt, ct)
 
-        return self.colors["blue"].format(s) + "  "
+        return ds.format_with_one_style(s, ds.foreground_color.blue) + "  "
 
     def __name(self, record):
-        return "" if record.name == "root" else self.colors["cyan"].format(f"{record.name} - ")
+        return "" if record.name == "root" else ds.format_with_one_style(f"{record.name} - ", ds.foreground_color.cyan)
 
     def __position(self, record: LogRecord):
         if record.levelname in ["DEBUG", "INFO", "WARNING", "WARN"]:
             return ""
-        return self.colors["orange"].format(f"{record.pathname}:{record.lineno}") + "  "
+        return ds.format_with_one_style(f"{record.pathname}:{record.lineno}", ds.foreground_color.yellow) + "  "
 
     def format(self, record: LogRecord):
         record.message = record.getMessage()
