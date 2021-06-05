@@ -4,7 +4,7 @@
 # @Email: thepoy@163.com
 # @File Name: logger.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-05-24 12:05:42
+# @Modified: 2021-06-05 08:16:34
 
 import os
 import sys
@@ -23,8 +23,8 @@ ERROR = logging.ERROR
 FATAL = logging.FATAL
 CRITICAL = logging.CRITICAL
 
-LOG_FORMAT = '[%(levelname)s] %(asctime)s - %(name)s - %(pathname)s:%(lineno)d - %(message)s'
-TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+LOG_FORMAT = "[%(levelname)s] %(asctime)s - %(name)s - %(pathname)s:%(lineno)d - %(message)s"
+TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 default_level = WARNING
 

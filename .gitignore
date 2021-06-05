@@ -131,3 +131,4 @@ dmypy.json
 tests
 ._README.md
 ._README.zh_CN.md
+pyrightconfig.json

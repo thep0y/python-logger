@@ -4,7 +4,7 @@
 # @Email: thepoy@163.com
 # @File Name: formatter.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-05-27 09:41:46
+# @Modified: 2021-06-05 09:32:40
 
 import time
 
@@ -17,28 +17,20 @@ class ColorfulFormatter(Formatter):
     """
     有颜色的日志
     """
-    def __init__(self, fmt=None, datefmt=None, style='%'):
+
+    def __init__(self, fmt=None, datefmt=None, style="%"):
         self.default_color = "{0}"
 
-        self.colors = {
-            "off": "{0}",
-            "red": "\033[0;31m{0}\033[0m",
-            "green": "\033[0;32m{0}\033[0m",
-            "orange": "\033[0;33m{0}\033[0m",
-            "blue": "\033[0;34m{0}\033[0m",
-            "purple": "\033[0;35m{0}\033[0m",
-            "cyan": "\033[0;36m{0}\033[0m",
-            "gray": "\033[0;37m{0}\033[0m",
-        }
-
+        # fmt: off
         self.level_prefix = {
-            "DEBUG": "[DEBUG] ",
-            "INFO": "[INFO]  ",
-            "WARN": "[WARN]  ",
+            "DEBUG"  : "[DEBUG] ",
+            "INFO"   : "[INFO]  ",
+            "WARN"   : "[WARN]  ",
             "WARNING": "[WARN]  ",
-            "ERROR": "[ERROR] ",
-            "FATAL": "[FATAL] ",
+            "ERROR"  : "[ERROR] ",
+            "FATAL"  : "[FATAL] ",
         }
+        # fmt: on
 
         super().__init__(fmt, datefmt, style)
 
@@ -50,7 +42,7 @@ class ColorfulFormatter(Formatter):
             return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.green)
 
         if levelname == "WARNING":
-            return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.yellow)
+            return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.orange)
 
         if levelname == "ERROR":
             return ds.format_with_one_style(self.level_prefix[levelname], ds.foreground_color.red)
@@ -65,7 +57,7 @@ class ColorfulFormatter(Formatter):
 
     def __time(self, record):
         ct = self.converter(record.created)
-        s = time.strftime(self.datefmt, ct)
+        s = time.strftime(self.datefmt, ct)  # type: ignore
 
         return ds.format_with_one_style(s, ds.foreground_color.blue) + "  "
 
@@ -75,24 +67,12 @@ class ColorfulFormatter(Formatter):
     def __position(self, record: LogRecord):
         if record.levelname in ["DEBUG", "INFO", "WARNING", "WARN"]:
             return ""
-        return ds.format_with_one_style(f"{record.pathname}:{record.lineno}", ds.foreground_color.yellow) + "  "
+        return ds.format_with_one_style(f"{record.pathname}:{record.lineno}", ds.foreground_color.orange) + "\t"
 
     def format(self, record: LogRecord):
         record.message = record.getMessage()
         if self.usesTime():
             record.asctime = self.formatTime(record, self.datefmt)
-        s = self.formatMessage(record)
-        if record.exc_info:
-            if not record.exc_text:
-                record.exc_text = self.formatException(record.exc_info)
-        if record.exc_text:
-            if s[-1:] != "\n":
-                s = s + "\n"
-            s = s + record.exc_text
-        if record.stack_info:
-            if s[-1:] != "\n":
-                s = s + "\n"
-            s = s + self.formatStack(record.stack_info)
 
         msg = record.msg % record.args if record.args else record.msg
         s = self.__level(record.levelname) + self.__time(record) + self.__position(record) + self.__name(record) + msg
