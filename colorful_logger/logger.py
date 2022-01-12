@@ -4,7 +4,7 @@
 # @Email: thepoy@163.com
 # @File Name: logger.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-06-05 20:08:56
+# @Modified:  2022-01-12 23:05:41
 
 from logging.handlers import QueueListener
 import os
@@ -26,9 +26,10 @@ FATAL = logging.FATAL
 CRITICAL = logging.CRITICAL
 
 LOG_FORMAT = "[%(levelname)s] %(asctime)s - %(name)s - %(pathname)s:%(lineno)d - %(message)s"
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
-
 default_level = WARNING
+
+TIME_FORMAT_WITH_DATE = "%Y-%m-%d %H:%M:%S"
+TIME_FORMAT_WITHOUT_DATE = "%H:%M:%S"
 
 if os.environ.get("DEBUG"):
     default_level = DEBUG
@@ -54,6 +55,7 @@ class ColorfulLogger(Logger):
 def get_logger(
     name: Optional[str] = None,
     level: int = default_level,
+    datefmt: str = TIME_FORMAT_WITHOUT_DATE,
     show: bool = True,
     file_path: Optional[str] = None,
     file_colorful: bool = False,
@@ -87,9 +89,9 @@ def get_logger(
 
     handlers = []
     if show:
-        handlers.append(console_handler())
+        handlers.append(console_handler(datefmt))
     if file_path:
-        handlers.append(file_handler(file_path, file_colorful))
+        handlers.append(file_handler(file_path, file_colorful, datefmt))
 
     listener = ColorfulQueueListener(
         q,
@@ -101,7 +103,7 @@ def get_logger(
     return logger
 
 
-logger = get_logger()
+logger = get_logger(datefmt="%H:%M:%S")
 
 
 def child_logger(name: str, logger: ColorfulLogger = logger) -> ColorfulLogger:

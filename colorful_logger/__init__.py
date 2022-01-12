@@ -4,13 +4,20 @@
 # @Email: thepoy@163.com
 # @File Name: __init__.py
 # @Created: 2021-05-21 13:53:40
-# @Modified: 2021-06-05 19:03:16
+# @Modified:  2022-01-12 22:00:55
 
-# from colorful_logger.logger import logger, get_logger, child_logger, basic_logger
 
-# __all__ = ["logger", "get_logger", "child_logger", "basic_logger"]
+from colorful_logger.logger import get_logger, logger, child_logger, DEBUG, INFO, WARNING, ERROR, FATAL
 
-from colorful_logger.logger import get_logger, logger, child_logger
-__all__ = ["logger", "get_logger", "child_logger"]
+__all__ = [
+    "logger",
+    "get_logger",
+    "child_logger",
+    "DEBUG",
+    "INFO",
+    "WARNING",
+    "ERROR",
+    "FATAL",
+]
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"

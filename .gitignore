@@ -128,7 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-tests
-._README.md
-._README.zh_CN.md
-pyrightconfig.json
+test.py
