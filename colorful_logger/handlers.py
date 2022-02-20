@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Author: thepoy
-# @Email: thepoy@163.com
+# @Author:    thepoy
+# @Email:     thepoy@163.com
 # @File Name: handlers.py
-# @Created: 2021-05-21 13:53:40
-# @Modified:  2022-01-12 23:05:02
+# @Created:   2021-05-21 13:53:40
+# @Modified:  2022-02-20 14:25:12
 
 import logging
 
 from logging.handlers import QueueHandler, QueueListener
 from colorful_logger.formatter import ColorfulFormatter
-
-LOG_FORMAT = "[%(levelname)s] %(asctime)s - %(name)s - %(pathname)s:%(lineno)d - %(message)s"
+from colorful_logger.consts import LOG_FORMAT
 
 
 def console_handler(datefmt: str) -> logging.StreamHandler:

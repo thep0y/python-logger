@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Author: thepoy
-# @Email: thepoy@163.com
+# @Author:    thepoy
+# @Email:     thepoy@163.com
 # @File Name: __init__.py
-# @Created: 2021-05-21 13:53:40
-# @Modified:  2022-01-12 22:00:55
+# @Created:   2021-05-21 13:53:40
+# @Modified:  2022-02-20 14:25:37
 
-
-from colorful_logger.logger import get_logger, logger, child_logger, DEBUG, INFO, WARNING, ERROR, FATAL
+from colorful_logger.logger import (
+    get_logger,
+    logger,
+    child_logger,
+)
+from colorful_logger.consts import DEBUG, INFO, WARNING, ERROR, FATAL
 
 __all__ = [
     "logger",
@@ -20,4 +24,4 @@ __all__ = [
     "FATAL",
 ]
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Author: thepoy
-# @Email: thepoy@163.com
+# @Author:    thepoy
+# @Email:     thepoy@163.com
 # @File Name: logger.py
-# @Created: 2021-05-21 13:53:40
-# @Modified:  2022-01-12 23:05:41
+# @Created:   2021-05-21 13:53:40
+# @Modified:  2022-02-20 14:02:54
 
 from logging.handlers import QueueListener
 import os
@@ -15,21 +15,20 @@ import queue
 from typing import Optional
 from logging import Logger
 
-from colorful_logger.handlers import ColorfulQueueHandler, ColorfulQueueListener, console_handler, file_handler
+from colorful_logger.handlers import (
+    ColorfulQueueHandler,
+    ColorfulQueueListener,
+    console_handler,
+    file_handler,
+)
+from colorful_logger.consts import DEBUG, WARNING, TIME_FORMAT_WITHOUT_DATE
 
-NOTSET = logging.NOTSET
-DEBUG = logging.DEBUG
-INFO = logging.INFO
-WARNING = logging.WARNING
-ERROR = logging.ERROR
-FATAL = logging.FATAL
-CRITICAL = logging.CRITICAL
 
-LOG_FORMAT = "[%(levelname)s] %(asctime)s - %(name)s - %(pathname)s:%(lineno)d - %(message)s"
+LOG_FORMAT = (
+    "[%(levelname)s] %(asctime)s - %(name)s - %(pathname)s:%(lineno)d - %(message)s"
+)
 default_level = WARNING
 
-TIME_FORMAT_WITH_DATE = "%Y-%m-%d %H:%M:%S"
-TIME_FORMAT_WITHOUT_DATE = "%H:%M:%S"
 
 if os.environ.get("DEBUG"):
     default_level = DEBUG
@@ -48,7 +47,7 @@ class ColorfulLogger(Logger):
         self.listener.start()
         return self
 
-    def __exit__(self, type, value, trace):
+    def __exit__(self, *args):
         self.listener.stop()
 
 
@@ -76,7 +75,9 @@ def get_logger(
     """
 
     if not file_path and not show:
-        raise NotImplementedError("the log must be displayed in the terminal or saved to a file")
+        raise NotImplementedError(
+            "the log must be displayed in the terminal or saved to a file"
+        )
 
     name = name if name else "root"
     logger = ColorfulLogger(name)
@@ -103,7 +104,7 @@ def get_logger(
     return logger
 
 
-logger = get_logger(datefmt="%H:%M:%S")
+logger = get_logger()
 
 
 def child_logger(name: str, logger: ColorfulLogger = logger) -> ColorfulLogger:
