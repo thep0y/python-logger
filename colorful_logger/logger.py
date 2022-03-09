@@ -4,7 +4,7 @@
 # @Email:     thepoy@163.com
 # @File Name: logger.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-02-20 14:02:54
+# @Modified:  2022-03-09 10:51:40
 
 from logging.handlers import QueueListener
 import os
@@ -58,6 +58,7 @@ def get_logger(
     show: bool = True,
     file_path: Optional[str] = None,
     file_colorful: bool = False,
+    print_position: bool = True,
 ) -> ColorfulLogger:
     """Return a colorful logger with the specified name, creating it if necessary.
 
@@ -90,9 +91,13 @@ def get_logger(
 
     handlers = []
     if show:
-        handlers.append(console_handler(datefmt))
+        handlers.append(console_handler(datefmt, print_position=print_position))
     if file_path:
-        handlers.append(file_handler(file_path, file_colorful, datefmt))
+        handlers.append(
+            file_handler(
+                file_path, file_colorful, datefmt, print_position=print_position
+            )
+        )
 
     listener = ColorfulQueueListener(
         q,

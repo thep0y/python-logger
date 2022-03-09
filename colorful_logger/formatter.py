@@ -4,13 +4,19 @@
 # @Email:     thepoy@163.com
 # @File Name: formatter.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-02-20 14:18:31
+# @Modified:  2022-03-09 10:48:20
 
+import sys
 import os
 
 from datetime import datetime
 from logging import Formatter, LogRecord
-from typing import Dict, Literal, Optional, Tuple
+from typing import Dict, Optional, Tuple
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Literal
+else:
+    from typing import Literal
 
 from colort import display_style as ds
 from colort.colort import Style
@@ -29,8 +35,10 @@ class ColorfulFormatter(Formatter):
         fmt: Optional[str] = None,
         datefmt: Optional[str] = None,
         style: _style = "%",
+        print_position=True,
     ):
         self.default_color = "{0}"
+        self.print_position = print_position
 
         self.level_config: Dict[str, Tuple[str, Style]] = {
             "DEBUG": ("DEB", ds.fc.purple),
@@ -39,6 +47,7 @@ class ColorfulFormatter(Formatter):
             "WARNING": ("WAR", ds.fc.yellow),
             "ERROR": ("ERR", ds.fc.light_red),
             "FATAL": ("FAT", ds.fc.red),
+            "CRITICAL": ("FAT", ds.fc.red),
         }
 
         super().__init__(fmt, datefmt, style)
@@ -71,8 +80,12 @@ class ColorfulFormatter(Formatter):
         )
 
     def __position(self, record: LogRecord):
+        if not self.print_position:
+            return ""
+
         if record.levelname in ["INFO", "WARNING", "WARN"]:
             return ""
+
         return (
             ds.format_with_one_style(
                 f"{os.path.relpath(record.pathname)}:{record.lineno}", ds.mode.bold
