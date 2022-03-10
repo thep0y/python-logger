@@ -4,7 +4,7 @@
 # @Email:     thepoy@163.com
 # @File Name: formatter.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-09 13:57:24
+# @Modified:  2022-03-10 11:15:22
 
 import sys
 import os
@@ -36,9 +36,11 @@ class ColorfulFormatter(Formatter):
         datefmt: Optional[str] = None,
         style: _style = "%",
         print_position=True,
+        to_file=False,
     ):
         self.default_color = "{0}"
         self.print_position = print_position
+        self.to_file = to_file
 
         self.level_config: Dict[str, Tuple[str, Style]] = {
             "DEBUG": ("DEB", ds.fc.purple),
@@ -54,6 +56,10 @@ class ColorfulFormatter(Formatter):
 
     def __level(self, levelname: str):
         level = self.level_config[levelname]
+
+        if self.to_file:
+            return f"[{level[0]}] "
+
         return "%s%s%s " % (
             ds.format_with_one_style("[", ds.fc.light_gray),
             ds.format_with_one_style(level[0], level[1]),
@@ -70,9 +76,15 @@ class ColorfulFormatter(Formatter):
             else t.strftime(self.datefmt)
         )
 
+        if self.to_file:
+            return s + " "
+
         return ds.format_with_one_style(s, ds.fc.dark_gray) + " "
 
     def __name(self, record):
+        if self.to_file:
+            return "" if record.name == "root" else f"{record.name} "
+
         return (
             ""
             if record.name == "root"
@@ -86,6 +98,9 @@ class ColorfulFormatter(Formatter):
         if record.levelname in ["INFO", "WARNING", "WARN"]:
             return ""
 
+        if self.to_file:
+            return f"{os.path.abspath(record.pathname)}:{record.lineno} "
+
         return (
             ds.format_with_one_style(
                 f"{os.path.relpath(record.pathname)}:{record.lineno}", ds.mode.bold
@@ -95,6 +110,9 @@ class ColorfulFormatter(Formatter):
 
     @property
     def __connector(self):
+        if self.to_file:
+            return "- "
+
         return ds.format_with_one_style("-", ds.fc.light_cyan) + " "
 
     def format(self, record: LogRecord):
@@ -103,12 +121,24 @@ class ColorfulFormatter(Formatter):
             record.asctime = self.formatTime(record, self.datefmt)
 
         msg = record.msg % record.args if record.args else record.msg
-        s = (
-            self.__time(record)
-            + self.__level(record.levelname)
-            + self.__name(record)
-            + self.__position(record)
-            + self.__connector
-            + msg
-        )
+
+        if self.to_file:
+            s = (
+                self.__level(record.levelname)
+                + self.__time(record)
+                + self.__name(record)
+                + self.__position(record)
+                + self.__connector
+                + msg
+            )
+        else:
+            s = (
+                self.__time(record)
+                + self.__level(record.levelname)
+                + self.__name(record)
+                + self.__position(record)
+                + self.__connector
+                + msg
+            )
+
         return s

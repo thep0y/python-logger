@@ -4,7 +4,7 @@
 # @Email:     thepoy@163.com
 # @File Name: handlers.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-09 10:50:25
+# @Modified:  2022-03-10 11:09:04
 
 import logging
 
@@ -32,7 +32,10 @@ def file_handler(
     if colorful:
         fmt = ColorfulFormatter(datefmt=datefmt, print_position=print_position)
     else:
-        fmt = logging.Formatter(LOG_FORMAT, datefmt=datefmt)
+        # fmt = logging.Formatter(LOG_FORMAT, datefmt=datefmt)
+        fmt = ColorfulFormatter(
+            datefmt=datefmt, print_position=print_position, to_file=True
+        )
     file_handler.setFormatter(fmt)
     return file_handler
 
