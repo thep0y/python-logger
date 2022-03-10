@@ -4,12 +4,11 @@
 # @Email:     thepoy@163.com
 # @File Name: logger.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-09 10:51:40
+# @Modified:  2022-03-10 09:44:48
 
 from logging.handlers import QueueListener
 import os
 import sys
-import logging
 import queue
 
 from typing import Optional
@@ -21,7 +20,7 @@ from colorful_logger.handlers import (
     console_handler,
     file_handler,
 )
-from colorful_logger.consts import DEBUG, WARNING, TIME_FORMAT_WITHOUT_DATE
+from colorful_logger.consts import DEBUG, WARNING, FATAL, TIME_FORMAT_WITHOUT_DATE
 
 
 LOG_FORMAT = (
@@ -30,7 +29,12 @@ LOG_FORMAT = (
 default_level = WARNING
 
 
-if os.environ.get("DEBUG"):
+def is_debug() -> bool:
+    v = os.getenv("DEBUG")
+    return v is not None and v != "0" and v.lower() != "false"
+
+
+if is_debug():
     default_level = DEBUG
 
 
@@ -39,9 +43,9 @@ class ColorfulLogger(Logger):
         self.listener = listener
 
     def fatal(self, msg, *args, **kwargs):
-        if self.isEnabledFor(logging.FATAL):
-            self._log(logging.FATAL, msg, args, **kwargs)
-            sys.exit(1)
+        if self.isEnabledFor(FATAL):
+            self._log(FATAL, msg, args, **kwargs)
+        sys.exit(1)
 
     def __enter__(self):
         self.listener.start()
