@@ -4,12 +4,12 @@
 # @Email:     thepoy@163.com
 # @File Name: setup.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-25 10:10:52
+# @Modified:  2022-03-25 10:15:56
 
 import codecs
 import colorful_logger
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with codecs.open("README.md", "r", "utf-8") as fd:
     setup(
