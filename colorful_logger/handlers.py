@@ -4,13 +4,12 @@
 # @Email:     thepoy@163.com
 # @File Name: handlers.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-10 11:09:04
+# @Modified:  2022-03-25 10:06:16
 
 import logging
 
 from logging.handlers import QueueHandler, QueueListener
 from colorful_logger.formatter import ColorfulFormatter
-from colorful_logger.consts import LOG_FORMAT
 
 
 def console_handler(datefmt: str, print_position=True) -> logging.StreamHandler:
@@ -32,7 +31,6 @@ def file_handler(
     if colorful:
         fmt = ColorfulFormatter(datefmt=datefmt, print_position=print_position)
     else:
-        # fmt = logging.Formatter(LOG_FORMAT, datefmt=datefmt)
         fmt = ColorfulFormatter(
             datefmt=datefmt, print_position=print_position, to_file=True
         )

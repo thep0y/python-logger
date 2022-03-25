@@ -4,7 +4,7 @@
 # @Email:     thepoy@163.com
 # @File Name: setup.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-09 11:38:42
+# @Modified:  2022-03-25 10:10:52
 
 import codecs
 import colorful_logger
@@ -25,7 +25,8 @@ with codecs.open("README.md", "r", "utf-8") as fd:
         url="https://github.com/thep0y/python-logger",
         license="MIT",
         keywords="log logger logging colorful",
-        packages=find_packages(),
+        packages=["colorful_logger"],
+        package_data={"colorful_logger": ["py.typed"]},
         install_requires=[
             "colort>=0.6",
             "typing_extensions; python_version<'3.8'",
