@@ -4,14 +4,14 @@
 # @Email:     thepoy@163.com
 # @File Name: logger.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-10 09:44:48
+# @Modified:  2022-03-25 20:05:10
 
 from logging.handlers import QueueListener
 import os
 import sys
 import queue
 
-from typing import Optional
+from typing import NoReturn, Optional
 from logging import Logger
 
 from colorful_logger.handlers import (
@@ -42,7 +42,7 @@ class ColorfulLogger(Logger):
     def addListener(self, listener: QueueListener):
         self.listener = listener
 
-    def fatal(self, msg, *args, **kwargs):
+    def fatal(self, msg, *args, **kwargs) -> NoReturn:
         if self.isEnabledFor(FATAL):
             self._log(FATAL, msg, args, **kwargs)
         sys.exit(1)
