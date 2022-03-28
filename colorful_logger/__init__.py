@@ -4,7 +4,7 @@
 # @Email:     thepoy@163.com
 # @File Name: __init__.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-24 19:56:40
+# @Modified:  2022-03-25 17:31:58
 
 from colorful_logger.logger import (
     get_logger,
@@ -24,4 +24,4 @@ __all__ = [
     "FATAL",
 ]
 
-__version__ = "0.1.6"
+__version__ = "0.1.7"
