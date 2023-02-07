@@ -4,15 +4,16 @@
 # @Email:     thepoy@163.com
 # @File Name: logger.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-25 20:05:10
+# @Modified:  2023-02-07 14:05:40
 
-from logging.handlers import QueueListener
 import os
 import sys
 import queue
 
 from typing import NoReturn, Optional
 from logging import Logger
+from logging.handlers import QueueListener
+from colorful_logger.types import StrPath
 
 from colorful_logger.handlers import (
     ColorfulQueueHandler,
@@ -60,9 +61,10 @@ def get_logger(
     level: int = default_level,
     datefmt: str = TIME_FORMAT_WITHOUT_DATE,
     show: bool = True,
-    file_path: Optional[str] = None,
+    file_path: Optional[StrPath] = None,
     file_colorful: bool = False,
-    print_position: bool = True,
+    add_file_path: bool = True,
+    disable_line_number_filter: bool = False,
 ) -> ColorfulLogger:
     """Return a colorful logger with the specified name, creating it if necessary.
 
@@ -74,6 +76,8 @@ def get_logger(
         show (bool, True): Whether the log is displayed in the terminal, default is True.
         file_path (str, None): When 'file_path' is not None, the log will be saved to 'file_path'.
         file_colorful (bool, False): Whether the log file is in color, the default is False.
+        add_file_path (bool, True): Whether to add the path of the calling file, the default is False.
+        disable_line_number_filter (bool, False): Whether to add the number of calling line in all levels of logs, the default is False.
 
     Returns:
         ColorfulLogger: logger
@@ -95,11 +99,21 @@ def get_logger(
 
     handlers = []
     if show:
-        handlers.append(console_handler(datefmt, print_position=print_position))
+        handlers.append(
+            console_handler(
+                datefmt,
+                add_file_path=add_file_path,
+                disable_line_number_filter=disable_line_number_filter,
+            )
+        )
     if file_path:
         handlers.append(
             file_handler(
-                file_path, file_colorful, datefmt, print_position=print_position
+                file_path,
+                file_colorful,
+                datefmt,
+                add_file_path=add_file_path,
+                disable_line_number_filter=disable_line_number_filter,
             )
         )
 

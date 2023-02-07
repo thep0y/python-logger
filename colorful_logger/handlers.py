@@ -4,24 +4,35 @@
 # @Email:     thepoy@163.com
 # @File Name: handlers.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2022-03-25 10:06:16
+# @Modified:  2023-02-07 13:55:44
 
 import logging
 
 from logging.handlers import QueueHandler, QueueListener
 from colorful_logger.formatter import ColorfulFormatter
+from colorful_logger.types import StrPath
 
 
-def console_handler(datefmt: str, print_position=True) -> logging.StreamHandler:
+def console_handler(
+    datefmt: str, add_file_path=True, disable_line_number_filter=False
+) -> logging.StreamHandler:
     console_handler = logging.StreamHandler()
 
-    fmt = ColorfulFormatter(datefmt=datefmt, print_position=print_position)
+    fmt = ColorfulFormatter(
+        datefmt=datefmt,
+        add_file_path=add_file_path,
+        disable_line_number_filter=disable_line_number_filter,
+    )
     console_handler.setFormatter(fmt)
     return console_handler
 
 
 def file_handler(
-    file_path: str, colorful: bool, datefmt: str, print_position=True
+    file_path: StrPath,
+    colorful: bool,
+    datefmt: str,
+    add_file_path=True,
+    disable_line_number_filter=False,
 ) -> logging.FileHandler:
     file_handler = logging.FileHandler(
         filename=file_path,
@@ -29,10 +40,17 @@ def file_handler(
         encoding="utf-8",
     )
     if colorful:
-        fmt = ColorfulFormatter(datefmt=datefmt, print_position=print_position)
+        fmt = ColorfulFormatter(
+            datefmt=datefmt,
+            add_file_path=add_file_path,
+            disable_line_number_filter=disable_line_number_filter,
+        )
     else:
         fmt = ColorfulFormatter(
-            datefmt=datefmt, print_position=print_position, to_file=True
+            datefmt=datefmt,
+            add_file_path=add_file_path,
+            to_file=True,
+            disable_line_number_filter=disable_line_number_filter,
         )
     file_handler.setFormatter(fmt)
     return file_handler
