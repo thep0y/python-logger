@@ -4,7 +4,7 @@
 # @Email:     thepoy@163.com
 # @File Name: logger.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2023-02-07 14:05:40
+# @Modified:  2023-02-13 17:04:49
 
 import os
 import sys
@@ -45,7 +45,8 @@ class ColorfulLogger(Logger):
 
     def fatal(self, msg, *args, **kwargs) -> NoReturn:
         if self.isEnabledFor(FATAL):
-            self._log(FATAL, msg, args, **kwargs)
+            # NOTE: 因为这里调用了 fatal， stacklevel 需要设置为 2 才是真正的调用位置
+            self._log(FATAL, msg, args, **kwargs, stacklevel=2)
         sys.exit(1)
 
     def __enter__(self):
