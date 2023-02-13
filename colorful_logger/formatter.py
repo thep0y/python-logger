@@ -4,7 +4,7 @@
 # @Email:     thepoy@163.com
 # @File Name: formatter.py
 # @Created:   2021-05-21 13:53:40
-# @Modified:  2023-02-07 14:35:43
+# @Modified:  2023-02-13 15:33:52
 
 import sys
 import os
@@ -129,10 +129,10 @@ class ColorfulFormatter(Formatter):
             "WARNING",
             "WARN",
         ]:
-            return ""
+            return " "
 
         if not self.add_file_path and record.name == "root":
-            return ""
+            return " "
 
         return ds.format_with_one_style(f":{record.lineno} ", ds.mode.bold)
 
