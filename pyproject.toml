@@ -31,6 +31,7 @@ colorful_logger = ["py.typed"]
 
 # 即使为空也必须有这个 section 才能使用 setuptools_scm
 [tool.setuptools_scm]
+write_to = "colorful_logger/version.py"
 
 [tool.black]
 target-version = ['py38', 'py39', 'py310', 'py311']
