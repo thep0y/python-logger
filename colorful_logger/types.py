@@ -4,10 +4,10 @@
 # @Email:       thepoy@163.com
 # @File Name:   types.py
 # @Created At:  2023-02-07 13:08:55
-# @Modified At: 2023-02-21 10:42:59
+# @Modified At: 2023-02-21 12:51:03
 # @Modified By: thepoy
 
-from os import PathLike
 from typing import Union
+from pathlib import Path
 
-StrPath = Union[str, PathLike[str]]
+StrPath = Union[str, Path]

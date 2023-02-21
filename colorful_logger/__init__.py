@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   __init__.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-02-21 10:49:30
+# @Modified At: 2023-02-21 12:51:16
 # @Modified By: thepoy
 
 from colorful_logger.logger import (
@@ -34,6 +34,7 @@ __all__ = [
     "logger",
     "get_logger",
     "child_logger",
+    "NOTSET",
     "DEBUG",
     "INFO",
     "WARNING",
