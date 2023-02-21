@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   formatter.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-02-21 10:40:50
+# @Modified At: 2023-02-21 12:54:51
 # @Modified By: thepoy
 
 import sys
@@ -12,12 +12,12 @@ import os
 
 from datetime import datetime
 from logging import Formatter, LogRecord
-from typing import Dict, Final, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 if sys.version_info < (3, 8):
-    from typing_extensions import Literal
+    from typing_extensions import Literal, Final
 else:
-    from typing import Literal
+    from typing import Literal, Final
 
 from colort import display_style as ds
 from colort.colort import Style
