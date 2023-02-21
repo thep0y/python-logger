@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Author:    thepoy
-# @Email:     thepoy@163.com
-# @File Name: consts.py
-# @Created:   2022-02-20 13:45:21
-# @Modified:  2023-02-07 11:42:08
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+# @Author:      thepoy
+# @Email:       thepoy@163.com
+# @File Name:   consts.py
+# @Created At:  2022-02-20 13:45:21
+# @Modified At: 2023-02-21 10:42:05
+# @Modified By: thepoy
 
 import logging
 import os

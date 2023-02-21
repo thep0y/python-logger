@@ -22,17 +22,15 @@ You can directly use the default logger, the colored logs will be printed on the
 from colorful_logger import logger
 
 with logger:
-    logger.debug("This is a debug message.")
-    logger.info("This is a info message.")
-    logger.warning("This is a warning message.")
-    logger.error("This is a error message.")
-    logger.critical("This is a critical message.")
-    logger.fatal("This is a fatal message.")
+    logger.debug("default logger")
+    logger.info("default logger")
+    logger.warning("default logger")
+    logger.error("default logger")
 ```
 
-As you can see, `logger` needs to be executed in the `with` statement, because this package uses `QueueListener` to call log output. You need to call the `start` method before using `logger` to output the log, and you need to call `after the end of use. For the stop` method, I encapsulated these two methods in the `with` statement. In non-special scenarios, there is no need to call the `start` and `stop` methods separately.
+As you can see, `logger` needs to be executed in the `with` statement, because this package uses `QueueListener` to call log output. You need to call the `start` method before using `logger` to output the log, and you need to call the `stop` after the end of use. I encapsulated these two methods in the `with` statement. In non-special scenarios, there is no need to call the `start` and `stop` methods separately.
 
-![2022-01-12_23-20](https://s4.ax1x.com/2022/01/12/7K7VK0.png)
+![image-20230221100744751](https://s2.loli.net/2023/02/21/yXh5d9n4vO1mW3x.png)
 
 #### 2 custom logger
 
@@ -41,30 +39,74 @@ You can also change the log level, save the log to a file, change the logger nam
 ```python
 from colorful_logger import get_logger, DEBUG
 
-logger = get_logger(name="sample_logger", level=DEBUG, file_path="./test.log")
 
-with get_logger(name="sample_logger", level=DEBUG, file_path="./test.log", file_colorful=True) as logger:
-    logger.debug("This is a debug message.")
-    logger.info("This is a info message.")
-    logger.warning("This is a warning message.")
-    logger.error("This is a error message.")
-    logger.critical("This is a critical message.")
-    logger.fatal("This is a fatal message.")
+def demo_logger(to_file=False):
+    file = "test_%d.log"
+
+    l1 = get_logger(
+        "demo",
+        DEBUG,
+        add_file_path=False,
+        disable_line_number_filter=False,
+        file_path=file % 1 if to_file else None,
+    )
+    with l1:
+        l1.debug("without file path")
+        l1.info("without file path")
+        l1.warning("without file path")
+        l1.error("without file path")
+
+    l2 = get_logger(
+        "demo",
+        DEBUG,
+        add_file_path=True,
+        disable_line_number_filter=False,
+        file_path=file % 2 if to_file else None,
+    )
+    with l2:
+        l2.debug("with file path")
+        l2.info("with file path")
+        l2.warning("with file path")
+        l2.error("with file path")
+
+    l3 = get_logger(
+        None,
+        DEBUG,
+        add_file_path=True,
+        disable_line_number_filter=True,
+        file_path=file % 3 if to_file else None,
+    )
+    with l3:
+        l3.debug("without name, and with path")
+        l3.info("without name, and with path")
+        l3.warning("without name, and with path")
+        l3.error("without name, and with path")
+
+    l4 = get_logger(
+        None,
+        DEBUG,
+        add_file_path=False,
+        disable_line_number_filter=True,
+        file_path=file % 4 if to_file else None,
+    )
+    with l4:
+        l4.debug("without name and path")
+        l4.info("without name and path")
+        l4.warning("without name and path")
+        l4.error("without name and path")
 ```
 
 There may be unexpected situations when outputting logs outside of the `with` statement, which may not achieve the expected results.
 
-![2022-01-12_23-23](https://s4.ax1x.com/2022/01/12/7K73x1.png)
+![image-20230221100003891](https://s2.loli.net/2023/02/21/hqTSfOUobxgaQBI.png)
 
 The content of the log file `./test.log` (example, inconsistent with the information in the above figure):
 
 ```
-[90m23:22:42[0m [35m[DEBUG] [0m[36msample_logger - [0mThis is a debug message.
-[90m23:22:42[0m [32m[INFO]  [0m[36msample_logger - [0mThis is a info message.
-[90m23:22:42[0m [93m[WARN]  [0m[36msample_logger - [0mThis is a warning message.
-[90m23:22:42[0m [31m[ERROR] [0m[33mtest.py:17[0m [36msample_logger - [0mThis is a error message.
-[90m23:22:42[0m [31m[FATAL] [0m[33mtest.py:18[0m [36msample_logger - [0mThis is a critical message.
-[90m23:22:42[0m [31m[FATAL] [0m[33mtest.py:19[0m [36msample_logger - [0mThis is a fatal message.
+[90m10:09:33.146[0m [35mDEB[0m [36mdemo[0m[1m:26[0m [96m-[0m without file path
+[90m10:09:33.146[0m [32mINF[0m [36mdemo[0m [96m-[0m without file path
+[90m10:09:33.146[0m [33mWAR[0m [36mdemo[0m [96m-[0m without file path
+[90m10:09:33.146[0m [91mERR[0m [36mdemo[0m[1m:29[0m [96m-[0m without file path
 ```
 
 The log output to the file is not a color log by default.
@@ -73,10 +115,18 @@ If you need to save the color log in a file, set the `file_colorful` parameter t
 
 The color log file has only one function, which is to view the real-time log in the terminal:
 
+- Unix
+
 ```shell
 tail -f test.log
 # 或
 cat test.log
+```
+
+- Windows
+
+```powershell
+Get-Content -Path test.log
 ```
 
 #### 3 child logger
@@ -91,7 +141,7 @@ logger = get_logger(name="sample_logger", level=DEBUG, file_path="./test.log")
 
 with logger:
     logger.error("parent error")
-    l1 = child_logger("l1", logger)
+    l1 = logger.child("l1")
     l1.error("l1 error")
     l1.fatal("l1 fatal")
 ```
@@ -101,13 +151,16 @@ The child logger is the same except that the name is different from the parent l
 The execution of the child logger in the `with` statement of the parent logger does not mean that it must be called directly in the `with` statement. It can be executed in a function in the `with` statement, such as:
 
 ```python
-# main.py
+# log.py
 from colorful_logger import get_logger, DEBUG
 
-from other_file import test
-
-# parent logger
 logger = get_logger(name="sample_logger", level=DEBUG, file_path="./test.log")
+```
+
+```python
+# main.py
+from log import logger
+from other_file import test
 
 with logger:
     test()
@@ -116,7 +169,7 @@ with logger:
 ```python
 # other_file.py
 
-test_logger = child_logger("test_logger", logger)
+test_logger = logger.child("test_logger")
 
 def test():
     test_logger.error("test error")

@@ -1,17 +1,18 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Author:    thepoy
-# @Email:     thepoy@163.com
-# @File Name: formatter.py
-# @Created:   2021-05-21 13:53:40
-# @Modified:  2023-02-13 15:33:52
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+# @Author:      thepoy
+# @Email:       thepoy@163.com
+# @File Name:   formatter.py
+# @Created At:  2021-05-21 13:53:40
+# @Modified At: 2023-02-21 10:40:50
+# @Modified By: thepoy
 
 import sys
 import os
 
 from datetime import datetime
 from logging import Formatter, LogRecord
-from typing import Dict, Optional, Tuple
+from typing import Dict, Final, Optional, Tuple
 
 if sys.version_info < (3, 8):
     from typing_extensions import Literal
@@ -23,6 +24,32 @@ from colort.colort import Style
 from colorful_logger.consts import TIME_FORMAT_WITHOUT_DATE
 
 _style = Literal["%", "{", "$"]
+
+TimeSpec = Final[
+    Literal["auto", "hours", "minutes", "seconds", "milliseconds", "microseconds"]
+]
+
+
+def _format_time(hh: int, mm: int, ss: int, us: int, timespec: TimeSpec = "auto"):
+    specs = {
+        "hours": "{:02d}",
+        "minutes": "{:02d}:{:02d}",
+        "seconds": "{:02d}:{:02d}:{:02d}",
+        "milliseconds": "{:02d}:{:02d}:{:02d}.{:03d}",
+        "microseconds": "{:02d}:{:02d}:{:02d}.{:06d}",
+    }
+
+    if timespec == "auto":
+        # Skip trailing microseconds when us==0.
+        timespec = "microseconds" if us else "seconds"
+    elif timespec == "milliseconds":
+        us //= 1000
+    try:
+        fmt = specs[timespec]
+    except KeyError:
+        raise ValueError("Unknown timespec value")
+    else:
+        return fmt.format(hh, mm, ss, us)
 
 
 class ColorfulFormatter(Formatter):
@@ -60,24 +87,24 @@ class ColorfulFormatter(Formatter):
         level = self.level_config[levelname]
 
         if self.to_file:
-            return f"[{level[0]}] "
+            return f"[{level[0]}]"
 
-        return ds.format_with_one_style(level[0], level[1]) + " "
+        return ds.format_with_one_style(level[0], level[1])
 
     def __time(self, record):
         assert isinstance(self.datefmt, str)
 
         t = datetime.fromtimestamp(record.created)
         s = (
-            t.strftime(self.datefmt)[:-3]
+            _format_time(t.hour, t.minute, t.second, t.microsecond, "milliseconds")
             if self.datefmt == TIME_FORMAT_WITHOUT_DATE
             else t.strftime(self.datefmt)
         )
 
         if self.to_file:
-            return s + " "
+            return s
 
-        return ds.format_with_one_style(s, ds.fc.dark_gray) + " "
+        return ds.format_with_one_style(s, ds.fc.dark_gray)
 
     def __name(self, record: LogRecord):
         if self.to_file:
@@ -118,9 +145,6 @@ class ColorfulFormatter(Formatter):
                 os.path.relpath(record.pathname), ds.mode.bold
             )
 
-        if record.name != "root":
-            path = " " + path
-
         return path
 
     def __line_number(self, record: LogRecord):
@@ -129,19 +153,22 @@ class ColorfulFormatter(Formatter):
             "WARNING",
             "WARN",
         ]:
-            return " "
+            return ""
 
         if not self.add_file_path and record.name == "root":
-            return " "
+            return ""
 
-        return ds.format_with_one_style(f":{record.lineno} ", ds.mode.bold)
+        if self.to_file:
+            return f":{record.lineno}"
+
+        return ds.format_with_one_style(f":{record.lineno}", ds.mode.bold)
 
     @property
     def __connector(self):
         if self.to_file:
-            return "- "
+            return "-"
 
-        return ds.format_with_one_style("-", ds.fc.light_cyan) + " "
+        return ds.format_with_one_style("-", ds.fc.light_cyan)
 
     def format(self, record: LogRecord):
         record.message = record.getMessage()
@@ -151,24 +178,29 @@ class ColorfulFormatter(Formatter):
         msg = record.msg % record.args if record.args else record.msg
 
         if self.to_file:
-            s = (
-                self.__level(record.levelname)
-                + self.__time(record)
-                + self.__name(record)
-                + self.__file_path(record)
-                + self.__line_number(record)
-                + self.__connector
-                + msg
+            fields = (
+                self.__level(record.levelname),
+                self.__time(record),
+                self.__name(record),
+                self.__file_path(record),
+                self.__line_number(record),
+                self.__connector,
+                msg,
             )
         else:
-            s = (
-                self.__time(record)
-                + self.__level(record.levelname)
-                + self.__name(record)
-                + self.__file_path(record)
-                + self.__line_number(record)
-                + self.__connector
-                + msg
+            fields = (
+                self.__time(record),
+                self.__level(record.levelname),
+                self.__name(record),
+                self.__file_path(record),
+                self.__line_number(record),
+                self.__connector,
+                msg,
             )
 
-        return s
+        texts = [
+            " " + fields[i] if i > 0 and fields[i] and i != 4 else fields[i]
+            for i in range(len(fields))
+        ]
+
+        return "".join(texts)

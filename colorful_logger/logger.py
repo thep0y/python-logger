@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Author:    thepoy
-# @Email:     thepoy@163.com
-# @File Name: logger.py
-# @Created:   2021-05-21 13:53:40
-# @Modified:  2023-02-13 17:04:49
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+# @Author:      thepoy
+# @Email:       thepoy@163.com
+# @File Name:   logger.py
+# @Created At:  2021-05-21 13:53:40
+# @Modified At: 2023-02-21 10:47:25
+# @Modified By: thepoy
 
 import os
 import sys
@@ -24,15 +25,19 @@ from colorful_logger.handlers import (
 from colorful_logger.consts import DEBUG, WARNING, FATAL, TIME_FORMAT_WITHOUT_DATE
 
 
-LOG_FORMAT = (
-    "[%(levelname)s] %(asctime)s - %(name)s - %(pathname)s:%(lineno)d - %(message)s"
-)
 default_level = WARNING
 
 
 def is_debug() -> bool:
     v = os.getenv("DEBUG")
-    return v is not None and v != "0" and v.lower() != "false"
+
+    if not v or v == "0" or v.lower() == "false":
+        return False
+
+    if v == "1" or v.lower() == "true":
+        return True
+
+    return False
 
 
 if is_debug():
@@ -55,6 +60,14 @@ class ColorfulLogger(Logger):
 
     def __exit__(self, *args):
         self.listener.stop()
+
+    def child(self, name: str) -> "ColorfulLogger":
+        lc = ColorfulLogger(name)
+        lc.level = self.level
+        lc.handlers = self.handlers
+        lc.listener = self.listener
+        # lc.propagate = False
+        return lc
 
 
 def get_logger(
@@ -142,9 +155,4 @@ def child_logger(name: str, logger: ColorfulLogger = logger) -> ColorfulLogger:
         ColorfulLogger: child logger
     """
 
-    lc = ColorfulLogger(name)
-    lc.level = logger.level
-    lc.handlers = logger.handlers
-    lc.listener = logger.listener
-    # lc.propagate = False
-    return lc
+    return logger.child(name)
