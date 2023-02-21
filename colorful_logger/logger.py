@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-02-21 10:47:25
+# @Modified At: 2023-02-21 14:42:27
 # @Modified By: thepoy
 
 import os
@@ -65,8 +65,10 @@ class ColorfulLogger(Logger):
         lc = ColorfulLogger(name)
         lc.level = self.level
         lc.handlers = self.handlers
-        lc.listener = self.listener
-        # lc.propagate = False
+
+        if hasattr(self, "listener"):
+            lc.listener = self.listener
+
         return lc
 
 
@@ -79,6 +81,7 @@ def get_logger(
     file_colorful: bool = False,
     add_file_path: bool = True,
     disable_line_number_filter: bool = False,
+    asynchronous: bool = True,
 ) -> ColorfulLogger:
     """Return a colorful logger with the specified name, creating it if necessary.
 
@@ -92,6 +95,7 @@ def get_logger(
         file_colorful (bool, False): Whether the log file is in color, the default is False.
         add_file_path (bool, True): Whether to add the path of the calling file, the default is False.
         disable_line_number_filter (bool, False): Whether to add the number of calling line in all levels of logs, the default is False.
+        asynchronous (bool, true):  Whether to use asynchronous mode for logging, the default is True.
 
     Returns:
         ColorfulLogger: logger
@@ -104,10 +108,6 @@ def get_logger(
 
     name = name if name else "root"
     logger = ColorfulLogger(name)
-
-    q = queue.Queue(-1)  # no limit on size
-    queue_handler = ColorfulQueueHandler(q)
-    logger.addHandler(queue_handler)
 
     logger.setLevel(level)
 
@@ -131,12 +131,20 @@ def get_logger(
             )
         )
 
-    listener = ColorfulQueueListener(
-        q,
-        *handlers,
-    )
+    if asynchronous:
+        q = queue.Queue(-1)  # no limit on size
+        queue_handler = ColorfulQueueHandler(q)
+        logger.addHandler(queue_handler)
 
-    logger.addListener(listener)
+        listener = ColorfulQueueListener(
+            q,
+            *handlers,
+        )
+
+        logger.addListener(listener)
+    else:
+        for h in handlers:
+            logger.addHandler(h)
 
     return logger
 
