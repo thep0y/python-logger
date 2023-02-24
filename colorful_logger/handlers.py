@@ -4,19 +4,20 @@
 # @Email:       thepoy@163.com
 # @File Name:   handlers.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-02-21 10:42:23
+# @Modified At: 2023-02-24 14:34:03
 # @Modified By: thepoy
 
 import logging
 
 from logging.handlers import QueueHandler, QueueListener
+from typing import TextIO
 from colorful_logger.formatter import ColorfulFormatter
 from colorful_logger.types import StrPath
 
 
 def console_handler(
     datefmt: str, add_file_path=True, disable_line_number_filter=False
-) -> logging.StreamHandler:
+) -> logging.StreamHandler[TextIO]:
     console_handler = logging.StreamHandler()
 
     fmt = ColorfulFormatter(

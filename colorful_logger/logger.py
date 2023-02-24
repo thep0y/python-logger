@@ -4,15 +4,15 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-02-21 14:42:27
+# @Modified At: 2023-02-24 14:33:02
 # @Modified By: thepoy
 
 import os
 import sys
 import queue
 
-from typing import NoReturn, Optional
-from logging import Logger
+from typing import List, NoReturn, Optional
+from logging import Logger, Handler
 from logging.handlers import QueueListener
 from colorful_logger.types import StrPath
 
@@ -111,7 +111,7 @@ def get_logger(
 
     logger.setLevel(level)
 
-    handlers = []
+    handlers: List[Handler] = []
     if show:
         handlers.append(
             console_handler(
@@ -143,8 +143,7 @@ def get_logger(
 
         logger.addListener(listener)
     else:
-        for h in handlers:
-            logger.addHandler(h)
+        logger.handlers = handlers
 
     return logger
 
