@@ -1,8 +1,14 @@
 > :warning: This README is translated by Google. If there is a grammatical error, please open an issue to correct it!
 
-# python-logger
+<h1 align="center">Python Colorful Logger</h1>
 
-Colorful logger for python3
+<p align="center">
+    <a href="https://pepy.tech/project/colorful-logger"><img alt="Downloads" src="https://static.pepy.tech/badge/colorful-logger"></a>    
+    <a href="https://pepy.tech/project/colorful-logger"><img alt="Downloads" src="https://static.pepy.tech/badge/colorful-logger/month"></a>
+    <a href="https://pepy.tech/project/colorful-logger"><img alt="Downloads" src="https://static.pepy.tech/badge/colorful-logger/week"></a>
+</p>
+
+Colorful logger for python3.
 
 ## How to use
 
