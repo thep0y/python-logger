@@ -4,12 +4,13 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-02-24 14:33:02
+# @Modified At: 2023-03-05 14:47:22
 # @Modified By: thepoy
 
 import os
 import sys
 import queue
+import warnings
 
 from typing import List, NoReturn, Optional
 from logging import Logger, Handler
@@ -55,11 +56,19 @@ class ColorfulLogger(Logger):
         sys.exit(1)
 
     def __enter__(self):
-        self.listener.start()
+        if hasattr(self, "listener"):
+            self.listener.start()
+        else:
+            warnings.warn(
+                "do not use the with statement when using synchronous mode",
+                SyntaxWarning,
+            )
+
         return self
 
     def __exit__(self, *args):
-        self.listener.stop()
+        if hasattr(self, "listener"):
+            self.listener.stop()
 
     def child(self, name: str) -> "ColorfulLogger":
         lc = ColorfulLogger(name)

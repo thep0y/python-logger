@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   formatter.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-02-21 12:54:51
+# @Modified At: 2023-03-05 14:52:44
 # @Modified By: thepoy
 
 import sys
@@ -50,6 +50,9 @@ def _format_time(hh: int, mm: int, ss: int, us: int, timespec: TimeSpec = "auto"
         raise ValueError("Unknown timespec value")
     else:
         return fmt.format(hh, mm, ss, us)
+
+
+CONNECTOR = ">"
 
 
 class ColorfulFormatter(Formatter):
@@ -166,9 +169,9 @@ class ColorfulFormatter(Formatter):
     @property
     def __connector(self):
         if self.to_file:
-            return "-"
+            return CONNECTOR
 
-        return ds.format_with_one_style("-", ds.fc.light_cyan)
+        return ds.format_with_one_style(CONNECTOR, ds.fc.light_cyan)
 
     def format(self, record: LogRecord):
         record.message = record.getMessage()
