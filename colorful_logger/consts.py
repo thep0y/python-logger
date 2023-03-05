@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   consts.py
 # @Created At:  2022-02-20 13:45:21
-# @Modified At: 2023-02-21 10:42:05
+# @Modified At: 2023-03-05 15:24:57
 # @Modified By: thepoy
 
 import logging
@@ -12,7 +12,7 @@ import os
 
 from pathlib import Path
 
-NOTSET = logging.NOTSET
+TRACE = 5
 DEBUG = logging.DEBUG
 INFO = logging.INFO
 WARNING = logging.WARNING

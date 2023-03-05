@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   formatter.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-05 14:52:44
+# @Modified At: 2023-03-05 15:27:46
 # @Modified By: thepoy
 
 import sys
@@ -75,6 +75,7 @@ class ColorfulFormatter(Formatter):
         self.disable_line_number_filter = disable_line_number_filter
 
         self.level_config: Dict[str, Tuple[str, Style]] = {
+            "TRACE": ("TRC", ds.fc.dark_gray),
             "DEBUG": ("DEB", ds.fc.purple),
             "INFO": ("INF", ds.fc.green),
             "WARN": ("WAR", ds.fc.yellow),

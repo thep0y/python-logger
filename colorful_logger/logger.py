@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-05 14:47:22
+# @Modified At: 2023-03-05 15:30:26
 # @Modified By: thepoy
 
 import os
@@ -12,8 +12,9 @@ import sys
 import queue
 import warnings
 
-from typing import List, NoReturn, Optional
-from logging import Logger, Handler
+from typing import Any, List, NoReturn, Optional
+from colort import display_style as ds
+from logging import Logger, Handler, _srcfile, addLevelName
 from logging.handlers import QueueListener
 from colorful_logger.types import StrPath
 
@@ -23,7 +24,15 @@ from colorful_logger.handlers import (
     console_handler,
     file_handler,
 )
-from colorful_logger.consts import DEBUG, WARNING, FATAL, TIME_FORMAT_WITHOUT_DATE
+from colorful_logger.consts import (
+    DEBUG,
+    TRACE,
+    WARNING,
+    ERROR,
+    FATAL,
+    INFO,
+    TIME_FORMAT_WITHOUT_DATE,
+)
 
 
 default_level = WARNING
@@ -46,14 +55,79 @@ if is_debug():
 
 
 class ColorfulLogger(Logger):
+    def __init__(self, name: str, level: int = 0) -> None:
+        super().__init__(name, level)
+        addLevelName(TRACE, "TRACE")
+
     def addListener(self, listener: QueueListener):
         self.listener = listener
 
-    def fatal(self, msg, *args, **kwargs) -> NoReturn:
+    def _log(
+        self,
+        level: int,
+        msg: str,
+        exc_info=None,
+        extra=None,
+        stack_info=False,
+        stacklevel=1,
+        **kwargs: Any,
+    ):
+        """
+        Low-level logging routine which creates a LogRecord and then calls
+        all the handlers of this logger to handle the record.
+        """
+        sinfo = None
+        if _srcfile:
+            # IronPython doesn't track Python frames, so findCaller raises an
+            # exception on some versions of IronPython. We trap it here so that
+            # IronPython can use logging.
+            try:
+                fn, lno, func, sinfo = self.findCaller(stack_info, stacklevel)
+            except ValueError:  # pragma: no cover
+                fn, lno, func = "(unknown file)", 0, "(unknown function)"
+        else:  # pragma: no cover
+            fn, lno, func = "(unknown file)", 0, "(unknown function)"
+        if exc_info:
+            if isinstance(exc_info, BaseException):
+                exc_info = (type(exc_info), exc_info, exc_info.__traceback__)
+            elif not isinstance(exc_info, tuple):
+                exc_info = sys.exc_info()
+
+        for k, v in kwargs.items():
+            if k in ("err", "error"):
+                msg += f" {ds.format_with_one_style(k+'=', ds.fc.red)}{v}"
+            else:
+                msg += f" {ds.format_with_one_style(k+'=', ds.fc.cyan)}{v}"
+
+        record = self.makeRecord(
+            self.name, level, fn, lno, msg, {}, exc_info, func, extra, sinfo
+        )
+        self.handle(record)
+
+    def fatal(self, msg: str, **kwargs: Any) -> NoReturn:
         if self.isEnabledFor(FATAL):
-            # NOTE: 因为这里调用了 fatal， stacklevel 需要设置为 2 才是真正的调用位置
-            self._log(FATAL, msg, args, **kwargs, stacklevel=2)
+            self._log(FATAL, msg, **kwargs, stacklevel=2)
         sys.exit(1)
+
+    def info(self, msg: str, **kwargs: Any):
+        if self.isEnabledFor(INFO):
+            self._log(INFO, msg, **kwargs, stacklevel=2)
+
+    def debug(self, msg: str, **kwargs: Any):
+        if self.isEnabledFor(DEBUG):
+            self._log(DEBUG, msg, **kwargs, stacklevel=2)
+
+    def warning(self, msg: str, **kwargs: Any):
+        if self.isEnabledFor(WARNING):
+            self._log(WARNING, msg, **kwargs, stacklevel=2)
+
+    def error(self, msg: str, **kwargs: Any):
+        if self.isEnabledFor(ERROR):
+            self._log(ERROR, msg, **kwargs, stacklevel=2)
+
+    def trace(self, msg: str, **kwargs: Any):
+        if self.isEnabledFor(TRACE):
+            self._log(TRACE, msg, **kwargs, stacklevel=2)
 
     def __enter__(self):
         if hasattr(self, "listener"):
