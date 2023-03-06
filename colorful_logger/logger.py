@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-05 15:30:26
+# @Modified At: 2023-03-06 18:15:58
 # @Modified By: thepoy
 
 import os
@@ -12,7 +12,8 @@ import sys
 import queue
 import warnings
 
-from typing import Any, List, NoReturn, Optional
+from types import TracebackType
+from typing import Any, List, NoReturn, Optional, Union, Mapping
 from colort import display_style as ds
 from logging import Logger, Handler, _srcfile, addLevelName
 from logging.handlers import QueueListener
@@ -54,6 +55,13 @@ if is_debug():
     default_level = DEBUG
 
 
+_SysExcInfoType = Union[
+    tuple[type[BaseException], BaseException, Optional[TracebackType]],
+    tuple[None, None, None],
+]
+_ExcInfoType = Union[_SysExcInfoType, BaseException]
+
+
 class ColorfulLogger(Logger):
     def __init__(self, name: str, level: int = 0) -> None:
         super().__init__(name, level)
@@ -66,10 +74,10 @@ class ColorfulLogger(Logger):
         self,
         level: int,
         msg: str,
-        exc_info=None,
-        extra=None,
-        stack_info=False,
-        stacklevel=1,
+        exc_info: Optional[_ExcInfoType] = None,
+        extra: Optional[Mapping[str, Any]] = None,
+        stack_info: bool = False,
+        stacklevel: int = 1,
         **kwargs: Any,
     ):
         """
