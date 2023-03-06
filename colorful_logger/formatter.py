@@ -4,10 +4,9 @@
 # @Email:       thepoy@163.com
 # @File Name:   formatter.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 20:58:22
+# @Modified At: 2023-03-06 21:02:58
 # @Modified By: thepoy
 
-from pathlib import WindowsPath
 import sys
 import os
 import json
