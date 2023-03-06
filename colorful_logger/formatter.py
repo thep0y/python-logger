@@ -4,15 +4,18 @@
 # @Email:       thepoy@163.com
 # @File Name:   formatter.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-05 15:27:46
+# @Modified At: 2023-03-06 19:49:14
 # @Modified By: thepoy
 
 import sys
 import os
+import json
 
 from datetime import datetime
 from logging import Formatter, LogRecord
 from typing import Dict, Optional, Tuple
+
+from colorful_logger.types import Record
 
 if sys.version_info < (3, 8):
     from typing_extensions import Literal, Final
@@ -21,7 +24,7 @@ else:
 
 from colort import display_style as ds
 from colort.colort import Style
-from colorful_logger.consts import TIME_FORMAT_WITHOUT_DATE
+from colorful_logger.consts import TIME_FORMAT_WITH_DATE, TIME_FORMAT_WITHOUT_DATE
 
 _style = Literal["%", "{", "$"]
 
@@ -99,11 +102,15 @@ class ColorfulFormatter(Formatter):
         assert isinstance(self.datefmt, str)
 
         t = datetime.fromtimestamp(record.created)
-        s = (
-            _format_time(t.hour, t.minute, t.second, t.microsecond, "milliseconds")
-            if self.datefmt == TIME_FORMAT_WITHOUT_DATE
-            else t.strftime(self.datefmt)
-        )
+
+        if self.datefmt == TIME_FORMAT_WITHOUT_DATE:
+            s = _format_time(t.hour, t.minute, t.second, t.microsecond, "milliseconds")
+        elif self.datefmt == TIME_FORMAT_WITH_DATE:
+            s = t.strftime("%Y-%m-%d ") + _format_time(
+                t.hour, t.minute, t.second, t.microsecond, "milliseconds"
+            )
+        else:
+            s = t.strftime(self.datefmt)
 
         if self.to_file:
             return s
@@ -121,11 +128,12 @@ class ColorfulFormatter(Formatter):
         )
 
     def __file_path(self, record: LogRecord):
-        if not self.add_file_path:
-            return ""
-
+        # 保存到文件时调用路径是必需字段
         if self.to_file:
             return os.path.abspath(record.pathname)
+
+        if not self.add_file_path:
+            return ""
 
         if sys.platform == "win32":
             # Windows 上当 os.path.relpath 的 path 和 start
@@ -152,6 +160,10 @@ class ColorfulFormatter(Formatter):
         return path
 
     def __line_number(self, record: LogRecord):
+        # 保存到文件时调用代码行数是必需字段
+        if self.to_file:
+            return f":{record.lineno}"
+
         if not self.disable_line_number_filter and record.levelname in [
             "INFO",
             "WARNING",
@@ -162,9 +174,6 @@ class ColorfulFormatter(Formatter):
         if not self.add_file_path and record.name == "root":
             return ""
 
-        if self.to_file:
-            return f":{record.lineno}"
-
         return ds.format_with_one_style(f":{record.lineno}", ds.mode.bold)
 
     @property
@@ -174,33 +183,39 @@ class ColorfulFormatter(Formatter):
 
         return ds.format_with_one_style(CONNECTOR, ds.fc.light_cyan)
 
-    def format(self, record: LogRecord):
+    def format(self, record: Record):
         record.message = record.getMessage()
         if self.usesTime():
             record.asctime = self.formatTime(record, self.datefmt)
 
-        msg = record.msg % record.args if record.args else record.msg
+        msg = record.msg
 
         if self.to_file:
-            fields = (
-                self.__level(record.levelname),
-                self.__time(record),
-                self.__name(record),
-                self.__file_path(record),
-                self.__line_number(record),
-                self.__connector,
-                msg,
-            )
-        else:
-            fields = (
-                self.__time(record),
-                self.__level(record.levelname),
-                self.__name(record),
-                self.__file_path(record),
-                self.__line_number(record),
-                self.__connector,
-                msg,
-            )
+            log_map = {
+                "level": record.levelname,
+                "time": self.__time(record),
+                "message": msg,
+                **record.args,
+                "caller": f"{self.__file_path(record)}{self.__line_number(record)}",
+            }
+
+            return json.dumps(log_map)
+
+        for k, v in record.args.items():
+            if k in ("err", "error"):
+                msg += f" {ds.format_with_one_style(k+'=', ds.fc.red)}{v}"
+            else:
+                msg += f" {ds.format_with_one_style(k+'=', ds.fc.cyan)}{v}"
+
+        fields = (
+            self.__time(record),
+            self.__level(record.levelname),
+            self.__name(record),
+            self.__file_path(record),
+            self.__line_number(record),
+            self.__connector,
+            msg,
+        )
 
         texts = [
             " " + fields[i] if i > 0 and fields[i] and i != 4 else fields[i]

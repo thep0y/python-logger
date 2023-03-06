@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 18:15:58
+# @Modified At: 2023-03-06 19:52:12
 # @Modified By: thepoy
 
 import os
@@ -34,6 +34,7 @@ from colorful_logger.consts import (
     INFO,
     TIME_FORMAT_WITHOUT_DATE,
 )
+from colorful_logger.types import Record
 
 
 default_level = WARNING
@@ -66,6 +67,7 @@ class ColorfulLogger(Logger):
     def __init__(self, name: str, level: int = 0) -> None:
         super().__init__(name, level)
         addLevelName(TRACE, "TRACE")
+        addLevelName(FATAL, "FATAL")
 
     def addListener(self, listener: QueueListener):
         self.listener = listener
@@ -101,14 +103,8 @@ class ColorfulLogger(Logger):
             elif not isinstance(exc_info, tuple):
                 exc_info = sys.exc_info()
 
-        for k, v in kwargs.items():
-            if k in ("err", "error"):
-                msg += f" {ds.format_with_one_style(k+'=', ds.fc.red)}{v}"
-            else:
-                msg += f" {ds.format_with_one_style(k+'=', ds.fc.cyan)}{v}"
-
         record = self.makeRecord(
-            self.name, level, fn, lno, msg, {}, exc_info, func, extra, sinfo
+            self.name, level, fn, lno, msg, kwargs, exc_info, func, extra, sinfo
         )
         self.handle(record)
 
