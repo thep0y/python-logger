@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 20:05:57
+# @Modified At: 2023-03-06 20:08:46
 # @Modified By: thepoy
 
 import os
@@ -14,7 +14,6 @@ import warnings
 
 from types import TracebackType
 from typing import Any, List, NoReturn, Optional, Union, Mapping
-from colort import display_style as ds
 from logging import Logger, Handler, _srcfile, addLevelName
 from logging.handlers import QueueListener
 from colorful_logger.types import StrPath
@@ -34,7 +33,6 @@ from colorful_logger.consts import (
     INFO,
     TIME_FORMAT_WITHOUT_DATE,
 )
-from colorful_logger.types import Record
 
 
 default_level = WARNING
