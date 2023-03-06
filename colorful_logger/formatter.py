@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   formatter.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 21:02:58
+# @Modified At: 2023-03-06 21:22:14
 # @Modified By: thepoy
 
 import sys
@@ -190,13 +190,16 @@ class ColorfulFormatter(Formatter):
 
         msg = record.msg
 
+        kwargs = {}
+        for k, v in record.kwargs.items():
+            k = k.replace("_", "-")
+            if isinstance(v, (str, int, bool, float, dict, tuple, list)):
+                kwargs[k] = v
+                continue
+
+            kwargs[k] = str(v)
+
         if self.to_file:
-            for k, v in record.kwargs.items():
-                if isinstance(v, (str, int, bool, float, dict, tuple, list)):
-                    continue
-
-                record.kwargs[k] = str(v)
-
             log_map = {
                 "level": record.levelname,
                 "time": self.__time(record),
