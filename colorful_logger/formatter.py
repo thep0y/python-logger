@@ -4,9 +4,10 @@
 # @Email:       thepoy@163.com
 # @File Name:   formatter.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 20:06:27
+# @Modified At: 2023-03-06 20:58:22
 # @Modified By: thepoy
 
+from pathlib import WindowsPath
 import sys
 import os
 import json
@@ -191,6 +192,12 @@ class ColorfulFormatter(Formatter):
         msg = record.msg
 
         if self.to_file:
+            for k, v in record.kwargs.items():
+                if isinstance(v, (str, int, bool, float, dict, tuple, list)):
+                    continue
+
+                record.kwargs[k] = str(v)
+
             log_map = {
                 "level": record.levelname,
                 "time": self.__time(record),
