@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   types.py
 # @Created At:  2023-02-07 13:08:55
-# @Modified At: 2023-03-06 19:34:50
+# @Modified At: 2023-03-06 20:05:17
 # @Modified By: thepoy
 
 from typing import Any, Dict, Optional, Union
@@ -15,4 +15,4 @@ StrPath = Union[str, Path]
 
 
 class Record(LogRecord):
-    args: Dict[str, Any] = {}
+    kwargs: Dict[str, Any] = {}

@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   formatter.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 19:49:14
+# @Modified At: 2023-03-06 20:06:27
 # @Modified By: thepoy
 
 import sys
@@ -195,13 +195,13 @@ class ColorfulFormatter(Formatter):
                 "level": record.levelname,
                 "time": self.__time(record),
                 "message": msg,
-                **record.args,
+                **record.kwargs,
                 "caller": f"{self.__file_path(record)}{self.__line_number(record)}",
             }
 
             return json.dumps(log_map)
 
-        for k, v in record.args.items():
+        for k, v in record.kwargs.items():
             if k in ("err", "error"):
                 msg += f" {ds.format_with_one_style(k+'=', ds.fc.red)}{v}"
             else:

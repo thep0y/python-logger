@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 19:52:12
+# @Modified At: 2023-03-06 20:05:57
 # @Modified By: thepoy
 
 import os
@@ -104,32 +104,64 @@ class ColorfulLogger(Logger):
                 exc_info = sys.exc_info()
 
         record = self.makeRecord(
-            self.name, level, fn, lno, msg, kwargs, exc_info, func, extra, sinfo
+            self.name, level, fn, lno, msg, {}, exc_info, func, extra, sinfo
         )
+        record.kwargs = kwargs
+
         self.handle(record)
 
     def fatal(self, msg: str, **kwargs: Any) -> NoReturn:
+        """
+        Log msg and kwargs with severity 'FATAL'.
+
+        logger.fatal("got student failed", err="something error", status_code=403)
+        """
         if self.isEnabledFor(FATAL):
             self._log(FATAL, msg, **kwargs, stacklevel=2)
         sys.exit(1)
 
     def info(self, msg: str, **kwargs: Any):
+        """
+        Log msg and kwargs with severity 'INFO'.
+
+        logger.info("got a student", id=1, name="Tommy")
+        """
         if self.isEnabledFor(INFO):
             self._log(INFO, msg, **kwargs, stacklevel=2)
 
     def debug(self, msg: str, **kwargs: Any):
+        """
+        Log msg and kwargs with severity 'DEBUG'.
+
+        logger.debug("got a student", id=1, name="Tommy")
+        """
         if self.isEnabledFor(DEBUG):
             self._log(DEBUG, msg, **kwargs, stacklevel=2)
 
     def warning(self, msg: str, **kwargs: Any):
+        """
+        Log msg and kwargs with severity 'WARNING'.
+
+        logger.warning("got a student without name", id=1)
+        """
         if self.isEnabledFor(WARNING):
             self._log(WARNING, msg, **kwargs, stacklevel=2)
 
     def error(self, msg: str, **kwargs: Any):
+        """
+        Log msg and kwargs with severity 'ERROR'.
+
+        logger.error("got student failed", err="something error", status_code=403)
+        """
         if self.isEnabledFor(ERROR):
             self._log(ERROR, msg, **kwargs, stacklevel=2)
 
     def trace(self, msg: str, **kwargs: Any):
+        """
+        Log msg and kwargs with severity 'TRACE'.
+
+        logger.trace("got a student", id=1, name="Tommy")
+        """
         if self.isEnabledFor(TRACE):
             self._log(TRACE, msg, **kwargs, stacklevel=2)
 
