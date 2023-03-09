@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-09 09:34:33
+# @Modified At: 2023-03-09 10:05:01
 # @Modified By: thepoy
 
 import os
@@ -90,7 +90,10 @@ class ColorfulLogger(Logger):
             # exception on some versions of IronPython. We trap it here so that
             # IronPython can use logging.
             try:
-                fn, lno, func, sinfo = self.findCaller(stack_info, stacklevel)
+                if sys.version_info >= (3, 8):
+                    fn, lno, func, sinfo = self.findCaller(stack_info, stacklevel)
+                else:
+                    fn, lno, func, sinfo = self.findCaller(stack_info)
             except ValueError:  # pragma: no cover
                 fn, lno, func = "(unknown file)", 0, "(unknown function)"
         else:  # pragma: no cover
