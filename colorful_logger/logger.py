@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 21:02:15
+# @Modified At: 2023-03-09 09:30:03
 # @Modified By: thepoy
 
 import os
@@ -13,7 +13,7 @@ import queue
 import warnings
 
 from types import TracebackType
-from typing import Any, List, NoReturn, Optional, Union, Mapping
+from typing import Any, List, NoReturn, Optional, Union, Mapping, Type
 from logging import Logger, Handler, _srcfile, addLevelName
 from logging.handlers import QueueListener
 from colorful_logger.types import StrPath
@@ -55,7 +55,7 @@ if is_debug():
 
 
 _SysExcInfoType = Union[
-    tuple[type[BaseException], BaseException, Optional[TracebackType]],
+    tuple[Type[BaseException], BaseException, Optional[TracebackType]],
     tuple[None, None, None],
 ]
 _ExcInfoType = Union[_SysExcInfoType, BaseException]
