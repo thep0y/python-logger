@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-09 10:05:01
+# @Modified At: 2023-03-19 17:02:34
 # @Modified By: thepoy
 
 import os
@@ -77,7 +77,7 @@ class ColorfulLogger(Logger):
         exc_info: Optional[_ExcInfoType] = None,
         extra: Optional[Mapping[str, Any]] = None,
         stack_info: bool = False,
-        stacklevel: int = 1,
+        stacklevel: int = 3,
         **kwargs: Any,
     ):
         """
