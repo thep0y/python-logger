@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-19 17:02:34
+# @Modified At: 2023-03-22 15:29:03
 # @Modified By: thepoy
 
 import os
@@ -36,6 +36,24 @@ from colorful_logger.consts import (
 
 
 default_level = WARNING
+
+
+_env_levels = {
+    "0": FATAL,
+    "1": ERROR,
+    "2": WARNING,
+    "3": INFO,
+    "4": DEBUG,
+    "5": TRACE,
+}
+
+
+def get_level_from_env(default_level=WARNING):
+    level = os.getenv("LOG_LEVEL")
+    if not level:
+        return default_level
+
+    return _env_levels.get(level, default_level)
 
 
 def is_debug() -> bool:
