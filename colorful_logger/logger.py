@@ -4,7 +4,7 @@
 # @Email:       thepoy@163.com
 # @File Name:   logger.py
 # @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-22 15:29:03
+# @Modified At: 2023-04-06 16:09:03
 # @Modified By: thepoy
 
 import os
@@ -13,7 +13,7 @@ import queue
 import warnings
 
 from types import TracebackType
-from typing import Any, List, NoReturn, Optional, Tuple, Union, Mapping, Type
+from typing import Any, List, NoReturn, Optional, Tuple, Union, Mapping, Type, Dict
 from logging import Logger, Handler, _srcfile, addLevelName
 from logging.handlers import QueueListener
 from colorful_logger.types import StrPath
@@ -96,7 +96,7 @@ class ColorfulLogger(Logger):
         extra: Optional[Mapping[str, Any]] = None,
         stack_info: bool = False,
         stacklevel: int = 3,
-        **kwargs: Any,
+        kwargs: Dict[str, Any] = {},
     ):
         """
         Low-level logging routine which creates a LogRecord and then calls
@@ -136,7 +136,7 @@ class ColorfulLogger(Logger):
         logger.fatal("got student failed", err="something error", status_code=403)
         """
         if self.isEnabledFor(FATAL):
-            self._log(FATAL, msg, **kwargs)
+            self._log(FATAL, msg, kwargs=kwargs)
         sys.exit(1)
 
     def info(self, msg: str, **kwargs: Any):
@@ -146,7 +146,7 @@ class ColorfulLogger(Logger):
         logger.info("got a student", id=1, name="Tommy")
         """
         if self.isEnabledFor(INFO):
-            self._log(INFO, msg, **kwargs)
+            self._log(INFO, msg, kwargs=kwargs)
 
     def debug(self, msg: str, **kwargs: Any):
         """
@@ -155,7 +155,7 @@ class ColorfulLogger(Logger):
         logger.debug("got a student", id=1, name="Tommy")
         """
         if self.isEnabledFor(DEBUG):
-            self._log(DEBUG, msg, **kwargs)
+            self._log(DEBUG, msg, kwargs=kwargs)
 
     def warning(self, msg: str, **kwargs: Any):
         """
@@ -164,7 +164,7 @@ class ColorfulLogger(Logger):
         logger.warning("got a student without name", id=1)
         """
         if self.isEnabledFor(WARNING):
-            self._log(WARNING, msg, **kwargs)
+            self._log(WARNING, msg, kwargs=kwargs)
 
     def error(self, msg: str, **kwargs: Any):
         """
@@ -173,7 +173,7 @@ class ColorfulLogger(Logger):
         logger.error("got student failed", err="something error", status_code=403)
         """
         if self.isEnabledFor(ERROR):
-            self._log(ERROR, msg, **kwargs)
+            self._log(ERROR, msg, kwargs=kwargs)
 
     def trace(self, msg: str, **kwargs: Any):
         """
@@ -182,7 +182,7 @@ class ColorfulLogger(Logger):
         logger.trace("got a student", id=1, name="Tommy")
         """
         if self.isEnabledFor(TRACE):
-            self._log(TRACE, msg, **kwargs)
+            self._log(TRACE, msg, kwargs=kwargs)
 
     def __enter__(self):
         if hasattr(self, "listener"):
