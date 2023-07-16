@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-# @Author:      thepoy
-# @Email:       thepoy@163.com
-# @File Name:   formatter.py
-# @Created At:  2021-05-21 13:53:40
-# @Modified At: 2023-03-06 21:22:14
-# @Modified By: thepoy
 
 import sys
 import os
@@ -204,7 +198,7 @@ class ColorfulFormatter(Formatter):
                 "level": record.levelname,
                 "time": self.__time(record),
                 "message": msg,
-                **record.kwargs,
+                **kwargs,
                 "caller": f"{self.__file_path(record)}{self.__line_number(record)}",
             }
 
