@@ -204,7 +204,7 @@ class ColorfulFormatter(Formatter):
 
             return json.dumps(log_map)
 
-        for k, v in record.kwargs.items():
+        for k, v in kwargs.items():
             if k in ("err", "error"):
                 msg += f" {ds.format_with_one_style(k+'=', ds.fc.red)}{v}"
             else:
