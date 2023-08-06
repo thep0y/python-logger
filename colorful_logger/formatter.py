@@ -16,8 +16,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Literal, Final
 
-from colort import display_style as ds
-from colort.colort import Style
+from colort import Style, ForegroundColor as fc, colorize
 from colorful_logger.consts import TIME_FORMAT_WITH_DATE, TIME_FORMAT_WITHOUT_DATE
 
 _style = Literal["%", "{", "$"]
@@ -71,15 +70,15 @@ class ColorfulFormatter(Formatter):
         self.to_file = to_file
         self.disable_line_number_filter = disable_line_number_filter
 
-        self.level_config: Dict[str, Tuple[str, Style]] = {
-            "TRACE": ("TRC", ds.fc.dark_gray),
-            "DEBUG": ("DEB", ds.fc.purple),
-            "INFO": ("INF", ds.fc.green),
-            "WARN": ("WAR", ds.fc.yellow),
-            "WARNING": ("WAR", ds.fc.yellow),
-            "ERROR": ("ERR", ds.fc.light_red),
-            "FATAL": ("FAT", ds.fc.red),
-            "CRITICAL": ("FAT", ds.fc.red),
+        self.level_config: Dict[str, Tuple[str, fc]] = {
+            "TRACE": ("TRC", fc.DARK_GRAY),
+            "DEBUG": ("DEB", fc.PURPLE),
+            "INFO": ("INF", fc.GREEN),
+            "WARN": ("WAR", fc.YELLOW),
+            "WARNING": ("WAR", fc.YELLOW),
+            "ERROR": ("ERR", fc.RED),
+            "FATAL": ("FAT", fc.RED),
+            "CRITICAL": ("FAT", fc.RED),
         }
 
         super().__init__(fmt, datefmt, style)
@@ -90,7 +89,7 @@ class ColorfulFormatter(Formatter):
         if self.to_file:
             return f"[{level[0]}]"
 
-        return ds.format_with_one_style(level[0], level[1])
+        return colorize(level[0], level[1])
 
     def __time(self, record):
         assert isinstance(self.datefmt, str)
@@ -109,17 +108,13 @@ class ColorfulFormatter(Formatter):
         if self.to_file:
             return s
 
-        return ds.format_with_one_style(s, ds.fc.dark_gray)
+        return colorize(s, fc.DARK_GRAY)
 
     def __name(self, record: LogRecord):
         if self.to_file:
             return "" if record.name == "root" else f"{record.name}"
 
-        return (
-            ""
-            if record.name == "root"
-            else ds.format_with_one_style(f"{record.name}", ds.fc.cyan)
-        )
+        return "" if record.name == "root" else colorize(f"{record.name}", fc.CYAN)
 
     def __file_path(self, record: LogRecord):
         # 保存到文件时调用路径是必需字段
@@ -147,9 +142,7 @@ class ColorfulFormatter(Formatter):
                     os.path.abspath(record.pathname), ds.mode.bold
                 )
         else:
-            path = ds.format_with_one_style(
-                os.path.relpath(record.pathname), ds.mode.bold
-            )
+            path = colorize(os.path.relpath(record.pathname), Style.BOLD)
 
         return path
 
@@ -168,14 +161,14 @@ class ColorfulFormatter(Formatter):
         if not self.add_file_path and record.name == "root":
             return ""
 
-        return ds.format_with_one_style(f":{record.lineno}", ds.mode.bold)
+        return colorize(f":{record.lineno}", Style.BOLD)
 
     @property
     def __connector(self):
         if self.to_file:
             return CONNECTOR
 
-        return ds.format_with_one_style(CONNECTOR, ds.fc.light_cyan)
+        return colorize(CONNECTOR, fc.LIGHT_CYAN)
 
     def format(self, record: Record):
         record.message = record.getMessage()
@@ -206,9 +199,9 @@ class ColorfulFormatter(Formatter):
 
         for k, v in kwargs.items():
             if k in ("err", "error"):
-                msg += f" {ds.format_with_one_style(k+'=', ds.fc.red)}{v}"
+                msg += f" {colorize(k+'=', fc.RED)}{v}"
             else:
-                msg += f" {ds.format_with_one_style(k+'=', ds.fc.cyan)}{v}"
+                msg += f" {colorize(k+'=', fc.CYAN)}{v}"
 
         fields = (
             self.__time(record),
