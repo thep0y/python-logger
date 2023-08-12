@@ -45,15 +45,38 @@ _env_levels = {
     "3": INFO,
     "4": DEBUG,
     "5": TRACE,
+    "fatal": FATAL,
+    "error": ERROR,
+    "warn": WARNING,
+    "warning": WARNING,
+    "info": INFO,
+    "debug": DEBUG,
+    "trace": TRACE,
 }
 
 
 def get_level_from_env(default_level=WARNING):
+    """Gets the log level from the LOG_LEVEL environment variable.
+
+    Checks the LOG_LEVEL environment variable and returns the
+    corresponding log level constant. If LOG_LEVEL is unset,
+    returns the default log level provided.
+
+    LOG_LEVEL can contain any of the keys in _ENV_LOG_LEVELS.
+    The string is converted to lower case before checking.
+
+    Args:
+      default_level (int, WARNING): The log level to return if
+            LOG_LEVEL is unset.
+
+    Returns:
+      The log level constant corresponding to the LOG_LEVEL env var.
+    """
     level = os.getenv("LOG_LEVEL")
     if not level:
         return default_level
 
-    return _env_levels.get(level, default_level)
+    return _env_levels.get(level.lower(), default_level)
 
 
 def is_debug() -> bool:
