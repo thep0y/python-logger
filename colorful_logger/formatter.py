@@ -8,6 +8,7 @@ import json
 from datetime import datetime
 from logging import Formatter, LogRecord
 from typing import Dict, Optional, Tuple
+from pathlib import Path
 
 from colorful_logger.types import Record
 
@@ -49,6 +50,13 @@ def _format_time(hh: int, mm: int, ss: int, us: int, timespec: TimeSpec = "auto"
 
 
 CONNECTOR = ">"
+
+
+class PathEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Path):
+            return str(obj)
+        return json.JSONEncoder.default(self, obj)
 
 
 class ColorfulFormatter(Formatter):
@@ -180,11 +188,7 @@ class ColorfulFormatter(Formatter):
         kwargs = {}
         for k, v in record.kwargs.items():
             k = k.replace("_", "-")
-            if isinstance(v, (str, int, bool, float, dict, tuple, list)):
-                kwargs[k] = v
-                continue
-
-            kwargs[k] = str(v)
+            kwargs[k] = v
 
         if self.to_file:
             log_map = {
@@ -195,7 +199,7 @@ class ColorfulFormatter(Formatter):
                 "caller": f"{self.__file_path(record)}{self.__line_number(record)}",
             }
 
-            return json.dumps(log_map)
+            return json.dumps(log_map, cls=PathEncoder)
 
         for k, v in kwargs.items():
             if k in ("err", "error"):
